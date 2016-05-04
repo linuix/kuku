@@ -41,8 +41,19 @@ public class VideoActivity extends CardboardActivity implements VideoTimeListene
         setContentView(view);
         setCardboardView(view);
 
+
+
         Intent intent = getIntent();
-        renderer = new VideoRenderer(VideoActivity.this, intent.getStringExtra("videopath"));
+        String videoPath = "";
+        String action = intent.getAction();
+        if (action != null && action.equals(Intent.ACTION_VIEW)){
+            videoPath = intent.getData().getPath();
+            renderer = new VideoRenderer(VideoActivity.this, videoPath);
+        }else {
+            renderer = new VideoRenderer(VideoActivity.this, intent.getStringExtra("videopath"));
+        }
+
+
         view.setRenderer(renderer);
         view.setSurfaceRenderer(renderer);
         renderer.setVideoTimeListener(this);
@@ -64,6 +75,8 @@ public class VideoActivity extends CardboardActivity implements VideoTimeListene
                 view.changeVRMode();
             }
         });
+
+
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,9 +111,14 @@ public class VideoActivity extends CardboardActivity implements VideoTimeListene
         });
     }
 
+    /**
+     * 准备播放前的回调
+     * @param length
+     */
     @Override
     public void onVideoInit(int length) {
         videoSeekBar.setMax(length);
+        view.setVRModeEnabled(false);
     }
 
     @Override

@@ -24,6 +24,9 @@ import org.rajawali3d.primitives.Sphere;
 
 import java.io.File;
 
+/**
+ * 视频播放类
+ */
 public class VideoRenderer extends RajawaliCardboardRenderer implements CardboardEventListener {
 
 
@@ -160,9 +163,9 @@ public class VideoRenderer extends RajawaliCardboardRenderer implements Cardboar
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mode == DRAG) {
-                    posX2 = e.getX();
+                    posX2 = -e.getX();
                     posY2 = e.getY();
-
+                    Log.e("one_point_touch_move",posX2+"--------"+posY2);
                     if (posX2 - posX1 > 0) {
                         angleX = angleX + (posX2 - posX1) / 10;
                     } else if (posX1 - posX2 > 0) {
@@ -179,6 +182,7 @@ public class VideoRenderer extends RajawaliCardboardRenderer implements Cardboar
                         posY1 = posY2;
                     }
                 } else if (mode == ZOOM) {
+                    Log.e("two_point_touch_move",posX2+"--------"+posY2);
                     distance1 = calculateDistance(e);
                     if (distance1 - distance2 > 0) {
                         if (fieldOfView < 130) {

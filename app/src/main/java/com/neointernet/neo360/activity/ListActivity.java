@@ -22,12 +22,11 @@ import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private String folderPath = Environment.getExternalStorageDirectory() + File.separator + "360Videos";
+    private String folderPath = Environment.getExternalStorageDirectory() + File.separator;
     private File folder;
     private File[] files;
     private ArrayList<File> fileArrayList;
     private FileObserver fileObserver;
-//
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -79,7 +78,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         File newFile = (File)v.getTag();
-        Intent intent = new Intent(ListActivity.this, VideoActivity.class);
+        Intent intent = new Intent(this, VideoActivity.class);
         intent.putExtra("videopath", newFile.getPath());
         startActivity(intent);
     }
