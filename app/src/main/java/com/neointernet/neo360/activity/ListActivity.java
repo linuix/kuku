@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private String folderPath = Environment.getExternalStorageDirectory() + File.separator;
+    private String folderPath = Environment.getExternalStorageDirectory() + File.separator+"QMERVideos";
     private File folder;
     private File[] files;
     private ArrayList<File> fileArrayList;
@@ -37,6 +37,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_list);
 
         folder = new File(folderPath);
+        if(!folder.exists()){
+            folder.mkdir();
+        }
         Log.i("Folder", folder.toString());
         Log.i("Folder", folder.getAbsolutePath().toString());
         Log.i("Folder", folder.listFiles().toString());
@@ -62,7 +65,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                         Log.i("FILE OBSERVER", "DELETE");
                         break;
                 }
-
             }
         };
     }

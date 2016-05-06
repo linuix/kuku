@@ -1,14 +1,19 @@
 package com.neointernet.neo360.activity;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SeekBar;
 
 import com.google.vrtoolkit.cardboard.CardboardActivity;
@@ -29,15 +34,17 @@ public class VideoActivity extends CardboardActivity implements VideoTimeListene
     private ImageButton vrButton, playButton;
     private SeekBar videoSeekBar;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         view = new MyCardboardView(VideoActivity.this);
         view.setSettingsButtonEnabled(false);
-        view.setVRModeEnabled(true);
+        view.setVRModeEnabled(false);
+        //vr中的框框
         view.setDistortionCorrectionEnabled(false);
-        view.setAlignmentMarkerEnabled(false);
+        view.setAlignmentMarkerEnabled(true);
         setContentView(view);
         setCardboardView(view);
 
@@ -60,7 +67,9 @@ public class VideoActivity extends CardboardActivity implements VideoTimeListene
 
         view.addCardboardEventListener(renderer);
         view.addCardboardEventListener(this);
-
+//        view.setRotationX(0);
+//        view.setRotationY(0);
+//        view.setRotation(30);
         LayoutInflater layoutInflater = getLayoutInflater();
         barLayout = (View) layoutInflater.inflate(R.layout.video_controller, null);
         addContentView(barLayout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -111,6 +120,12 @@ public class VideoActivity extends CardboardActivity implements VideoTimeListene
         });
     }
 
+
+    @Override
+    public void onCardboardTrigger() {
+//        super.onCardboardTrigger();
+    }
+
     /**
      * 准备播放前的回调
      * @param length
@@ -118,7 +133,7 @@ public class VideoActivity extends CardboardActivity implements VideoTimeListene
     @Override
     public void onVideoInit(int length) {
         videoSeekBar.setMax(length);
-        view.setVRModeEnabled(false);
+
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.google.vrtoolkit.cardboard.Eye;
+import com.google.vrtoolkit.cardboard.sensors.MagnetSensor;
 import com.neointernet.neo360.activity.VideoActivity;
 import com.neointernet.neo360.listener.CardboardEventListener;
 import com.neointernet.neo360.listener.VideoTimeListener;
@@ -17,6 +18,7 @@ import org.rajawali3d.cardboard.RajawaliCardboardRenderer;
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.materials.textures.StreamingTexture;
+import org.rajawali3d.math.Matrix;
 import org.rajawali3d.math.Matrix4;
 import org.rajawali3d.math.Quaternion;
 import org.rajawali3d.math.vector.Vector3;
@@ -89,6 +91,10 @@ public class VideoRenderer extends RajawaliCardboardRenderer implements Cardboar
         getCurrentCamera().setPosition(Vector3.ZERO);
         getCurrentCamera().setFieldOfView(75);
 
+//        Matrix.setLookAtM(getCurrentCamera().getModelMatrix().getDoubleValues(),0, 0,1,0,0,0,0,1,1,0);
+
+//        getCurrentCamera().setOrientation()
+
         mediaPlayer.start();
 
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -102,6 +108,7 @@ public class VideoRenderer extends RajawaliCardboardRenderer implements Cardboar
         });
 
         notifyVideoInit(mediaPlayer.getDuration());
+
     }
 
     public void setVideoTimeListener(VideoTimeListener listener) {
@@ -150,14 +157,14 @@ public class VideoRenderer extends RajawaliCardboardRenderer implements Cardboar
         mediaPlayer.release();
     }
 
+
     @Override
     public void onCardboardTouch(MotionEvent e) {
         int action = e.getAction();
         double fieldOfView = getCurrentCamera().getFieldOfView();
-
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-                posX1 = e.getX();
+                posX1 = -e.getX();
                 posY1 = e.getY();
                 mode = DRAG;
                 break;
@@ -182,8 +189,8 @@ public class VideoRenderer extends RajawaliCardboardRenderer implements Cardboar
                         posY1 = posY2;
                     }
                 } else if (mode == ZOOM) {
-                    Log.e("two_point_touch_move",posX2+"--------"+posY2);
                     distance1 = calculateDistance(e);
+                    Log.e("two_point_touch_move","两个点之间的距离为="+distance1);
                     if (distance1 - distance2 > 0) {
                         if (fieldOfView < 130) {
                             fieldOfView = fieldOfView + (distance1 - distance2) / 10;
@@ -215,6 +222,11 @@ public class VideoRenderer extends RajawaliCardboardRenderer implements Cardboar
         }
     }
 
+    /**
+     * 计算两个点之间距离
+     * @param e
+     * @return
+     */
     private float calculateDistance(MotionEvent e) {
         float x = e.getX(0) - e.getX(1);
         float y = e.getY(0) - e.getY(1);
@@ -225,11 +237,17 @@ public class VideoRenderer extends RajawaliCardboardRenderer implements Cardboar
     @Override
     public void onDrawEye(Eye eye) {
         eyeMatrix.setAll(eye.getEyeView());
+//        double [] eyem = eyeMatrix.getDoubleValues();
+//        Matrix.setLookAtM(eyem,0, 0,1,0,0,0,0,1,1,0);
+//        eyeMatrix.setAll(eyem);
+        //设置model绕Z轴旋转90度
+        eyeMatrix = eyeMatrix.rotate(0,0,1,90);
         eyeQuaternion.fromMatrix(eyeMatrix);
         rotateQuaternion.fromEuler(angleX, angleY, angleZ);
         getCurrentCamera().setOrientation(eyeQuaternion);
         getCurrentCamera().rotate(rotateQuaternion);
         render(elapsedRealtime, deltaTime);
+
     }
 
     public boolean isPlaying() {
